@@ -1,2 +1,2 @@
-# ListaComprasFlask
-Applicación con flask para almacenar una lista de compras 
+# Lista de Compras con Flask
+Applicación en python con Flask y SQLalchemy para alamcenar una lista de compras
