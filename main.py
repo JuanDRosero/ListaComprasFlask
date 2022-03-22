@@ -23,9 +23,10 @@ def create_product(name, price):
 
 #agregar fecha default
 def create_order(products, date):
-    order = Pedido(fecha=datetime.strptime(date, '%Y-%m-%d'))
+    order = Pedido(fecha=datetime.strptime(date, '%Y-%m-%d'), total=sum([p.precio for p in products]))
     for product in products:
         order.productos.append(product)
+
     db.session.add(order)
     db.session.commit()
     db.session.refresh(order)
@@ -37,6 +38,7 @@ def read_products():
     return db.session.query(Producto).all()
 
 def read_orders():
+    orders = db.session.query(Pedido).all()
     return db.session.query(Pedido).all()
 
 def update_product(product_id, name, price):
@@ -53,6 +55,7 @@ def delete_product(product_id):
 
 def delete_product_list(order_id):
     db.session.query(Pedido).filter_by(id=order_id).delete()
+    db.session.query(ProductoPedido).filter_by(fk_pedido=order_id).delete()
     db.session.commit()
 
 
@@ -62,6 +65,7 @@ def add_list():
     selected_products = []
     if request.method == "POST":
         for value in request.form.getlist('check'):
+            print("value: ", end=value)
             selected_products.append(get_product_by_id(value))
         create_order(selected_products, request.form['fecha'])
     return render_template("lista.html", products=read_products())
@@ -106,6 +110,7 @@ class Pedido(db.Model):
     fecha=db.Column(db.DateTime, nullable=False,
         default=datetime.utcnow)
     productos = db.relationship('Producto', secondary='producto_pedido')
+    total=db.Column(db.Float(15),  nullable=False)
 
 class ProductoPedido(db.Model):
     __tablename__ = 'producto_pedido'
