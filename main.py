@@ -38,7 +38,6 @@ def read_products():
     return db.session.query(Producto).all()
 
 def read_orders():
-    orders = db.session.query(Pedido).all()
     return db.session.query(Pedido).all()
 
 def update_product(product_id, name, price):
